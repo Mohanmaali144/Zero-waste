@@ -44,7 +44,7 @@
 - userID ref (for get user details )
 - gst (nessusry)(string)
 - v_address :[{}]
-- rating 
+- rating
 - isVerify : {boolean / false}
 
 ## Vandor Operation / Api's
@@ -62,9 +62,47 @@
 - by keyword search
 - suggestion near location vandor max 9 - 12
 - show vandor details specific vandor when user click (by id)
-- make option for call redoirect to phone call 
-- user end enquiry to vandor send user email id and phon no and name to vandor 
-- user add any vandor in there wishlist 
+- make option for call redoirect to phone call
+- user end enquiry to vandor send user email id and phon no and name to vandor
+- user add any vandor in there wishlist
 - optional (whatsapp chat redirect)
 
-##
+## Product schema
+
+- product name : String,
+- description : String
+- price : String
+- quantity_avilable : number
+- seller_id : (refrance userid)
+- catgeoryname : (refrance category name)
+
+## category
+
+- catgory-name : String
+
+## Scrap Product list by user
+
+- User hase to option user make call to vandor and list thire scrap product
+
+## Scrap category
+
+- category-name : String
+
+## Scarp Product
+
+- user_id (ref userid)
+- category : (ref Scrap category)
+- quantity : number
+- wieght : nubmer
+- location String
+- contact_info : String,
+
+
+## Product / Scrap product seaching operation
+
+- search by name ,id,category,price
+- delete product id
+- update qunitity
+- product name update
+- add discount on price
+
