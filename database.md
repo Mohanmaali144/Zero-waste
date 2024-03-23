@@ -75,6 +75,8 @@
 - quantity_avilable : number
 - seller_id : (refrance userid)
 - catgeoryname : (refrance category name)
+- images [1,2,3,4]
+- discount : percentage
 
 ## category
 
@@ -96,7 +98,7 @@
 - wieght : nubmer
 - location String
 - contact_info : String,
-
+- images [1,2,3,4]
 
 ## Product / Scrap product seaching operation
 
@@ -105,4 +107,4 @@
 - update qunitity
 - product name update
 - add discount on price
-
+- add product
