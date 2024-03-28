@@ -1,4 +1,3 @@
-
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
@@ -22,10 +21,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
-  dob: {
-    type: Date,
-    required: true,
-  },
   contact: {
     type: String,
     required: true,
@@ -46,6 +41,7 @@ const userSchema = new mongoose.Schema({
   role: {
     type: String,
     enum: ["customer", "vendor"],
+    required: true,
   },
   location: [
     {
@@ -76,4 +72,3 @@ const userSchema = new mongoose.Schema({
 const User = mongoose.model("user", userSchema);
 
 export default User;
-
