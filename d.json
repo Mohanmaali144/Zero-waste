@@ -13,6 +13,7 @@
   },
   "Vandor": {
     "_id": "ObjectId(-------)",
+    "userId": "(ref User collections )",
     "gst": "Required : String",
     "address": [
       {
@@ -45,6 +46,7 @@
     ],
     "discountPercentage": "Number default : 0"
   },
+
   "$schema Category": {
     "_id": "ObjectId(-------)",
     "category": "smartphone"
@@ -133,6 +135,77 @@
       "type": "String",
       "enum": ["pending", "completed", "cancelled"],
       "default": "pending"
+    },
+    "createdAt": { "type": "Date", "default": "Date.now" }
+  },
+  "$schema Admin": {
+    "_id": { "type": "ObjectId", "required": true },
+    "adminname": { "type": "String", "required": true },
+    "password": { "type": "String", "required": true },
+    "email": { "type": "String", "required": true },
+    "createdAt": { "type": "Date", "default": "Date.now" },
+    "updatedAt": { "type": "Date", "default": "Date.now" }
+  },
+  "$schema VendorVerificationRequest": {
+    "_id": { "type": "ObjectId", "required": true },
+    "vendorId": { "type": "ObjectId", "ref": "Vendor", "required": true },
+    "status": {
+      "type": "String",
+      "enum": ["pending", "approved", "rejected"],
+      "default": "pending"
+    },
+    "createdAt": { "type": "Date", "default": "Date.now" },
+    "updatedAt": { "type": "Date", "default": "Date.now" }
+  },
+  "$schema ProductListRequest": {
+    "_id": { "type": "ObjectId", "required": true },
+    "userId": { "type": "ObjectId", "ref": "User", "required": true },
+    "products": [{ "type": "ObjectId", "ref": "Product" }],
+    "status": {
+      "type": "String",
+      "enum": ["pending", "approved", "rejected"],
+      "default": "pending"
+    },
+    "createdAt": { "type": "Date", "default": "Date.now" },
+    "updatedAt": { "type": "Date", "default": "Date.now" }
+  },
+  "$schema ScrapProductListRequest": {
+    "_id": { "type": "ObjectId", "required": true },
+    "userId": { "type": "ObjectId", "ref": "User", "required": true },
+    "Scrap-products": [{ "type": "ObjectId", "ref": "Product" }],
+    "status": {
+      "type": "String",
+      "enum": ["pending", "approved", "rejected"],
+      "default": "pending"
+    },
+    "createdAt": { "type": "Date", "default": "Date.now" },
+    "updatedAt": { "type": "Date", "default": "Date.now" }
+  },
+  "$schema AdminNotification": {
+    "_id": { "type": "ObjectId", "required": true },
+    "message": { "type": "String", "required": true },
+    "createdAt": { "type": "Date", "default": "Date.now" },
+    "read": { "type": "Boolean", "default": false }
+  },
+  "$schema Analytic": {
+    "_id": { "type": "ObjectId", "required": true },
+    "type": {
+      "type": "String",
+      "enum": ["UserActivity", "SalesPerformance", "SearchQueries", "Feedback"],
+      "required": true
+    },
+    "data": { "type": "Mixed", "required": true },
+    "createdAt": { "type": "Date", "default": "Date.now" }
+  },
+  "$schema Admin Post": {
+    "_id": { "type": "ObjectId", "required": true },
+    "adminId": { "type": "ObjectId", "ref": "AdminUser", "required": true },
+    "title": { "type": "String", "required": true },
+    "content": { "type": "String", "required": true },
+    "type": {
+      "type": "String",
+      "enum": ["benefits", "blog", "video", "tips", "tricks", "creative"],
+      "required": true
     },
     "createdAt": { "type": "Date", "default": "Date.now" }
   }
