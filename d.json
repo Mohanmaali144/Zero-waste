@@ -1,0 +1,139 @@
+{
+  "User Collections": {
+    "_id": "ObjectId(-------)",
+    "username": "Nitin",
+    "password": "1233456",
+    "profile": "String",
+    "dob": "Date",
+    "gender": "String",
+    "isActive": "boolean/false",
+    "isBlock": "bollean/false",
+    "location": "String",
+    "role": "(enum : vandor,Customer])"
+  },
+  "Vandor": {
+    "_id": "ObjectId(-------)",
+    "gst": "Required : String",
+    "address": [
+      {
+        "city": "Indore",
+        "pincode": "42001",
+        "State": "M.P",
+        "landmark": "Near SBI BANK",
+        "Full Address": "xyz"
+      }
+    ],
+    "rating": "Number max-5 min-0",
+    "isVerify": "boolean/false"
+  },
+  "Product Collections": {
+    "name": "String",
+    "description": "String",
+    "price": "String",
+    "quantity": "Number",
+    "seller_id": "ref userId",
+    "category": "ref category",
+    "thumbnail": "String",
+    "images": "[String]",
+    "brand": "String",
+    "rating": "",
+    "review": [
+      {
+        "UserId": "ObjectId(-----------)",
+        "review": "String"
+      }
+    ],
+    "discountPercentage": "Number default : 0"
+  },
+  "$schema Category": {
+    "_id": "ObjectId(-------)",
+    "category": "smartphone"
+  },
+  "$schema Scrap-Category": {
+    "_id": "ObjectId(-------)",
+    "Scrap-category": "Scrap-smartphone"
+  },
+  "Scrap Product": {
+    "userId": "ref UserId",
+    "category": "(ref Scrap)",
+    "quantity": "Number",
+    "wieght": "Number",
+    "location": [
+      {
+        "city": "Indore",
+        "pincode": "42001",
+        "State": "M.P",
+        "landmark": "Near SBI BANK",
+        "Full Address": "xyz"
+      }
+    ],
+    "contact": "String",
+    "thumbnail": "String",
+    "images": "[String]"
+  },
+  "$schema Cart": {
+    "UserId": { "type": "ObjectId", "ref": "User", "required": true },
+    "CartItem": [
+      {
+        "ProductId": { "type": "ObjectId", "ref": "Product", "required": true },
+        "quantity": { "type": "Number", "default": 1 }
+      }
+    ],
+    "totalPrice": { "type": "Number", "default": 0 }
+  },
+
+  "$schema Order": {
+    "UserId": { "type": "ObjectId", "ref": "User", "required": true },
+    "orderItems": [{ "ProductId": "ref Product" }],
+    "totalPrice": { "type": "Number", "required": true },
+    "createdAt": { "type": "Date", "default": "Date.now" },
+    "status": {
+      "type": "String",
+      "enum": ["pending", "processing", "completed", "cancelled"],
+      "default": "pending"
+    },
+    "Order-Price": "String"
+  },
+  "$schema Notification": {
+    "userId": { "type": "ObjectId", "ref": "User", "required": "true" },
+    "message": { "type": "String", "required": "true" },
+    "type": {
+      "type": "String",
+      "enum": ["info", "warning", "error"],
+      "default": "info"
+    },
+    "read": { "type": "Boolean", "default": "false" },
+    "createdAt": { "type": "Date", "default": "Date.now" }
+  },
+  "$schema ShippingAddress": {
+    "userId": { "type": "ObjectId", "ref": "User", "required": "true" },
+    "addressLine1": { "type": "String", "required": "true" },
+    "addressLine2": { "type": "String" },
+    "city": { "type": "String", "required": "true" },
+    "state": { "type": "String", "required": "true" },
+    "postalCode": { "type": "String", "required": "true" },
+    "country": { "type": "String", "required": "true" }
+  },
+  "$schema Payment": {
+    "userId": { "type": "ObjectId", "ref": "User", "required": "true" },
+    "amount": { "type": "ObjectId", "required": "true", "ref": "Order" },
+    "paymentMethod": {
+      "type": "String",
+      "enum": ["creditCard", "debitCard", "Cash On Delevery", "Net-Banking"],
+      "required": "true"
+    },
+    "createdAt": { "type": "Date", "default": "Date.now" }
+  },
+  "$schema Transection": {
+    "userId": { "type": "ObjectId", "ref": "User", "required": "true" },
+    "orderId": { "type": "ObjectId", "ref": "Order", "required": "true" },
+    "amount": { "type": "ObjectId", "required": "true", "ref": "Order" },
+    "paymentId": { "type": "ObjectId", "ref": "Payment", "required": "true" },
+    "status": {
+      "type": "String",
+      "enum": ["pending", "completed", "cancelled"],
+      "default": "pending"
+    },
+    "createdAt": { "type": "Date", "default": "Date.now" }
+  }
+}
