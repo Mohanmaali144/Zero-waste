@@ -25,7 +25,6 @@
       }
     ],
     "rating": "Number max-5 min-0",
-    "isVerify": "boolean/false"
   },
   "Product Collections": {
     "name": "String",
