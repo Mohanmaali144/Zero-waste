@@ -4,7 +4,6 @@
     "username": "Nitin",
     "password": "1233456",
     "profile": "String",
-    "dob": "Date",
     "gender": "String",
     "isActive": "boolean/false",
     "isBlock": "bollean/false",
@@ -28,7 +27,7 @@
     "isVerify": "boolean/false"
   },
   "Product Collections": {
-    "name": "String",
+    "product_name": "String",
     "description": "String",
     "price": "String",
     "quantity": "Number",
@@ -41,7 +40,7 @@
     "review": [
       {
         "UserId": "ObjectId(-----------)",
-        "review": "String"
+        "user_review": "String"
       }
     ],
     "discountPercentage": "Number default : 0"
@@ -49,7 +48,7 @@
 
   "$schema Category": {
     "_id": "ObjectId(-------)",
-    "category": "smartphone"
+    "categoryName": "smartphone"
   },
   "$schema Scrap-Category": {
     "_id": "ObjectId(-------)",
@@ -59,7 +58,7 @@
     "userId": "ref UserId",
     "category": "(ref Scrap)",
     "quantity": "Number",
-    "wieght": "Number",
+    "weight": "Number",
     "location": [
       {
         "city": "Indore",
