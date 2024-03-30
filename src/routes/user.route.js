@@ -1,6 +1,9 @@
-import { SignUp, signUp } from "../controllers/user.controller.js";
-import { express } from "express";
+import { register, saveOTP } from "../controllers/user.controller.js";
+import { sendOTP, verifyEmail } from "../middlewares/userotp.middleware.js";
+import express from "express";
 
 const userRouter = express.Router();
 
-userRouter.post("/signUp", signUp);
+userRouter.post("/sendOTP", sendOTP, saveOTP);
+userRouter.post("/register", verifyEmail, register);
+export default userRouter;

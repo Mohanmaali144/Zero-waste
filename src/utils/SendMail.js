@@ -1,30 +1,35 @@
-// const nodemailer = require("nodemailer");
 import nodemailer from "nodemailer";
+import dotenv from "dotenv";
+dotenv.config();
 
-const sendMail = async (req, res,next) => {
-  let testAccount = await nodemailer.createTestAccount();
-
-  // connect with the smtp
-  let transporter = await nodemailer.createTransport({
-    service:'Gmail',
-    auth: {
-      user: "marlene.rosenbaum24@ethereal.email",
-      pass: "2DYpt151BWeqTeEg8A",
-    },
-  });
-
-  let info = await transporter.sendMail({
-    from: 'mohanmaali143@gmail.com',
-    to: "nitinmalviya172@gmail.com",
-    subject: 'Email Verification',
-    text:  "hello wolrd",
-    // text: `Click the following link to verify your email: http://your-website.com/verify-email/${verificationToken}`,
-  });
-
-  console.log("Message sent: %s", info.messageId);
-  console.log(info)
-//   res.json(info);
+const sendMail = async (recipientEmail, emailSubject, emailMessage) => {
+  try {
+    // connect with the smtp
+    let transporter = await nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER_NAME,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+    });
+    const mailOptions = {
+      from: process.env.EMAIL_USER_NAME,
+      to: recipientEmail,
+      subject: emailSubject,
+      text: emailMessage,
+    };
+    await transporter.sendMail(mailOptions, (error, info) => {
+      if (!error) {
+        console.log("Email sent successfully: " + info);
+        console.log(info)
+        return true;
+      } else throw new Error("Failed to send email");
+    });
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to send email");
+  }
 };
+// sendMail("mehrapoonam379@gmail.com");
 
-sendMail();
 export default sendMail;
