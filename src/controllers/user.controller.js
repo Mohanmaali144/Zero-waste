@@ -1,10 +1,9 @@
-import sendMail from "../utils/SendMail.js";
 import User from "../models/user.model.js";
-import { PROJECT_NAME } from "../constants.js";
 import bcrypt from "bcrypt";
-// import { validationResult } from "express-validator";
-import { getEmailOTPMassage, generateOTP } from "../utils/generateMassage.js";
+import { validationResult } from "express-validator";
 import OTP from "../models/otp.model.js";
+import jwt from "jsonwebtoken";
+import { response } from "express";
 
 // User(Customer) otp send
 export const saveOTP = async (request, response, next) => {
@@ -28,7 +27,6 @@ export const saveOTP = async (request, response, next) => {
 };
 
 // User(Customer) register
-
 export const register = async (request, response, next) => {
   try {
     let password = request.body.password;
@@ -53,6 +51,68 @@ export const register = async (request, response, next) => {
     console.log(error);
     return response.status(500).json({ error: "internal server error" });
   }
+};
+
+// User(Customer) LOGIN
+export const signIn = async (req, res, next) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    const { email } = req.body;
+    // chack user
+    const user = await User.findOne({ email });
+    if (user) {
+      let password = req.body.password;
+      // check password
+      if (bcrypt.compareSync(password, user.password)) {
+        return res.status(200).json({
+          message: "Sign in success...",
+          user: { ...user.toObject(), password: undefined },
+          token: generateToken(email),
+        });
+      } else {
+        return res.status(500).json({ message: "Incorrect password..." });
+      }
+    } else {
+      return res
+        .status(401)
+        .json({ message: "Unauthorized user,,, please Check your email" });
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(401).json({ message: "Internal server error" });
+  }
+};
+
+// User(Customer) change password
+export const updatePassword = async (request, response, next) => {
+  try {
+    let { email, password } = request.body;
+    // password encryption.
+    let saltkey = bcrypt.genSaltSync(10);
+    password = bcrypt.hashSync(password, saltkey);
+    // request.body.password = password;
+    const result = await User.updateOne({ email }, { $set: { password } });
+    if (result.matchedCount) {
+      return response
+        .status(401)
+        .json({ message: "Paasword change Succesfully" });
+    }
+    return response
+      .status(401)
+      .json({ message: "Unauthorized user,,, please Check your email" });
+  } catch (err) {
+    console.log(err);
+    return res.status(401).json({ message: "Internal server error" });
+  }
+};
+
+// Token genrate
+const generateToken = (email) => {
+  let payload = { subject: email };
+  return jwt.sign(payload, process.env.JWT_SECRET);
 };
 
 // ------------------------

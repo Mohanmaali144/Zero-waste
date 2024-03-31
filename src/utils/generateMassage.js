@@ -33,4 +33,20 @@ const getEmailOTPMassage = (userName, otp) => {
   Best regards,
   ${PROJECT_NAME}`;
 };
-export { getEmailOTPMassage , generateOTP};
+
+const getForgetPasswordmassage = (otp) => {
+  return `Hello,
+
+  You have requested to reset your password for your account with us.
+  
+  Your One-Time Password (OTP) for password reset is:   ${otp}
+  
+  Please use this OTP to reset your password on our website.
+  
+  If you did not request this password reset, please ignore this email. Your password will remain unchanged.
+  
+  Thank you,
+ ${process.env.PROJECT_NAME}
+ `;
+};
+export { getEmailOTPMassage, generateOTP, getForgetPasswordmassage };
