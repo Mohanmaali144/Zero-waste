@@ -2,10 +2,8 @@ import dotenv from "dotenv";
 import app from "./app.js";
 import connectDB from "./db/doConfig.js";
 
-dotenv.config({
-  path: "./env",
-});
-
+dotenv.config();
+console.log(process.env.EMAIL_USER_NAME);
 connectDB()
   .then(() => {
     app.listen(process.env.PORT || 8000, () => {

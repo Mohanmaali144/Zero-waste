@@ -26,10 +26,6 @@ const userSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
-  gender: {
-    type: String,
-    enum: ["male", "female", "other"],
-  },
   isActive: {
     type: Boolean,
     default: false,
@@ -42,6 +38,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ["customer", "vendor"],
     required: true,
+    default: "customer",
   },
   location: [
     {
