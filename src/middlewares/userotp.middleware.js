@@ -30,10 +30,7 @@ const sendOTP = async (request, response, next) => {
       }
     }
     const otpNumber = generateOTP();
-    sendMail(
-      email,
-      `Subject: Your One-Time Password (OTP) for ${PROJECT_NAME}`,
-      getEmailOTPMassage(username, otpNumber)
+    sendMail(email,`Subject: Your One-Time Password (OTP) for ${PROJECT_NAME}`,getEmailOTPMassage(username, otpNumber)
     );
     request.body.otpNumber = otpNumber;
     // send on next controller
@@ -87,14 +84,16 @@ const verifyEmail = async (request, response, next) => {
     console.log(request.body);
     let otpData = await OTP.findOne({ email });
     console.log(otp);
-    if (otp === otpData.otp) {
-      await OTP.deleteOne({ email });
-      next();
-    } else {
-      return response
-        .status(400)
-        .json({ massage: "invalid Otp !!! make sure You write correct otp" });
-    }
+    console.log(otpData)
+      if (otp === otpData.otp) {
+        await OTP.deleteOne({ email });
+        next();
+      } else {
+        return response
+          .status(400)
+          .json({ massage: "invalid Otp !!! make sure You write correct otp" });
+      }
+    
   } catch (error) {
     console.log(error);
     return response.status(500).json({ error: "internal server error" });

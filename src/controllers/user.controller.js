@@ -4,6 +4,7 @@ import { validationResult } from "express-validator";
 import OTP from "../models/otp.model.js";
 import jwt from "jsonwebtoken";
 import { response } from "express";
+import Vendor from "../models/vendor.model.js";
 
 // User(Customer) otp send
 export const saveOTP = async (request, response, next) => {
@@ -18,13 +19,17 @@ export const saveOTP = async (request, response, next) => {
       })
       .catch((error) => {
         console.log(error);
-        return response.status(500).json({ error: "OTP " });
+        return response.status(500).json({ error: "OTP Failed to save" });
       });
   } catch (error) {
     console.log(error);
     return response.status(500).json({ error: "Internal server error " });
   }
 };
+
+
+
+
 
 // User(Customer) register
 export const register = async (request, response, next) => {
@@ -39,6 +44,19 @@ export const register = async (request, response, next) => {
       .then((result) => {
         // result = result.toObject();
         delete result.password;
+        if (request.body.role === "vendor") {
+          const { city, pincode, state, landmark, fullAddress } = request.body;
+          // Save Vendor Details
+          const vendor = Vendor.create({
+            userId: result._id,
+            gstNumber: request.body.gstNumber,
+            address: [{ city, pincode, state, landmark, fullAddress }],
+          });
+          return response.status(200).json({
+            massage: "Vendor registartion succesfully,,  wait for verification",
+            User: result,
+          });
+        }
         return response
           .status(200)
           .json({ massage: "User registartion succesfully", User: result });
