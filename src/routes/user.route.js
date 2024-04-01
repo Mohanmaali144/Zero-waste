@@ -1,10 +1,18 @@
 import express from "express";
-import { body } from "express-validator";
+import { body, param } from "express-validator";
 import {
   register,
   saveOTP,
   signIn,
   changePassword,
+  UpdateUsername,
+  getuserById,
+  getuserByEmail,
+  getuserByContect,
+  getuserByUsername,
+  getuserList,
+  blockUserById,
+  unblockUserById,
 } from "../controllers/user.controller.js";
 import {
   forgetPasswordOTP,
@@ -14,6 +22,7 @@ import {
 
 const userRouter = express.Router();
 
+// User Authentication Router
 userRouter.post(
   "/sendOTP",
   body("email", "email is required").notEmpty(),
@@ -74,8 +83,50 @@ userRouter.post(
   body("password", "Password required").notEmpty(),
   // body("password", "pleas Enter Strong password").isStrongPassword(),
   body("password", "pleas Enter Strong password").isLength({ min: 6 }),
-
   changePassword
 );
 
+userRouter.post(
+  "/change-username",
+  body("username", "Username requird").notEmpty(),
+  body("userId", "UserId requird").notEmpty(),
+  UpdateUsername
+);
+
+// get user Router
+userRouter.get(
+  "/getUser-byid/:userId",
+  param("userId", "UserId Required").notEmpty(),
+  getuserById
+);
+userRouter.get(
+  "/getUser-byemail/:email",
+  param("email", "email Required").notEmpty(),
+  param("email", "Invalid email").isEmail(),
+  getuserByEmail
+);
+userRouter.get(
+  "/getUser-bycontact/:contact",
+  param("contact", "contact number Required").notEmpty(),
+  getuserByContect
+);
+userRouter.get(
+  "/getUser-byusername/:username",
+  param("username", "username Required").notEmpty(),
+  getuserByUsername
+);
+userRouter.get("/getUser-list", getuserList);
+
+// Block - unblock
+userRouter.put(
+  "/blockuser-byid/:userId",
+  param("userId", "userId Required").notEmpty(),
+  blockUserById
+);
+
+userRouter.put(
+  "/unblockuser-byid/:userId",
+  param("userId", "userId Required").notEmpty(),
+  unblockUserById
+);
 export default userRouter;

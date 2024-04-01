@@ -72,7 +72,7 @@ export const signIn = async (request, response, next) => {
   }
 };
 
-// User(Customer) change password
+// User(Customer) change password By email
 export const changePassword = async (request, response, next) => {
   try {
     const { email, password } = request.body;
@@ -95,6 +95,166 @@ export const changePassword = async (request, response, next) => {
     return response.status(500).json({ message: "Internal server error" });
   }
 };
+// User(Customer) change password By Id
+export const changePasswordById = async (request, response, next) => {
+  try {
+    const { userId, password } = request.body;
+    const hashedPassword = bcrypt.hashSync(password, 10);
+    const result = await User.updateOne(
+      { _id: userId },
+      { $set: { password: hashedPassword } }
+    );
+    if (result.matchedCount) {
+      return response
+        .status(200)
+        .json({ message: "Password changed successfully" });
+    } else {
+      return response.status(401).json({ message: "Id Note Found" });
+    }
+  } catch (error) {
+    console.error(error);
+    return response.status(500).json({ message: "Internal server error" });
+  }
+};
+
+// Update  user (customer) Username By Id
+export const UpdateUsername = async (request, response, next) => {
+  try {
+    const { username, contact, userId } = request.body;
+    const result = await User.updateOne(
+      { _id: userId },
+      { $set: { username, contact } }
+    );
+    if (result.modifiedCount) {
+      return response.status(200).json({ massage: "Updated successfully" });
+    } else {
+      return response.status(400).json({ massage: "UserId Not Found" });
+    }
+  } catch (error) {
+    console.log(error);
+    return response.status(500).json("Internal server Error");
+  }
+};
+
+export const getuserById = async (request, response, next) => {
+  try {
+    let userId = request.params.userId;
+    const result = await User.findOne({ _id: userId });
+    if (result) {
+      result.password = undefined;
+      return response.status(200).json({ user: result });
+    } else {
+      return response.status(400).json({ massage: "UserId Not Found" });
+    }
+  } catch (error) {
+    console.log(error);
+    return response.status(500).json("Internal server Error");
+  }
+};
+
+export const getuserByEmail = async (request, response, next) => {
+  try {
+    let email = request.params.email;
+    const result = await User.findOne({ email });
+    if (result) {
+      result.password = undefined;
+      return response.status(200).json({ user: result });
+    } else {
+      return response.status(400).json({ massage: "Email Not Found" });
+    }
+  } catch (error) {
+    console.log(error);
+    return response.status(500).json("Internal server Error");
+  }
+};
+
+export const getuserByContect = async (request, response, next) => {
+  try {
+    let contact = request.params.contact;
+    const result = await User.findOne({ contact });
+    if (result) {
+      result.password = undefined;
+      return response.status(200).json({ user: result });
+    } else {
+      return response.status(400).json({ massage: "Contact Number Not Found" });
+    }
+  } catch (error) {
+    console.log(error);
+    return response.status(500).json("Internal server Error");
+  }
+};
+
+export const getuserByUsername = async (request, response, next) => {
+  try {
+    let username = request.params.username;
+    const result = await User.find({ username });
+    if (result.length > 0) {
+      result.forEach((user) => (user.password = undefined));
+      return response.status(200).json({ users: result });
+    } else {
+      return response.status(400).json({ massage: "Username Not Found" });
+    }
+  } catch (error) {
+    console.log(error);
+    return response.status(500).json("Internal server Error");
+  }
+};
+
+export const getuserList = async (request, response, next) => {
+  try {
+    const result = await User.find();
+    if (result.length > 0) {
+      result.forEach((user) => (user.password = undefined));
+      return response.status(200).json({ users: result });
+    } else {
+      return response.status(400).json({ massage: "Username Not Found" });
+    }
+  } catch (error) {
+    console.log(error);
+    return response.status(500).json("Internal server Error");
+  }
+};
+
+// Block user by id
+export const blockUserById = async (request, response, next) => {
+  try {
+    const userId = request.params.userId;
+    const result = await User.updateOne(
+      { _id: userId },
+      { $set: { isBlock: true } }
+    );
+
+    if (result.modifiedCount) {
+      return response
+        .status(200)
+        .json({ message: "User blocked successfully" });
+    }
+    return response.status(400).json({ message: "User not found" });
+  } catch (error) {
+    console.log(error);
+    return response.status(500).json("Internal server error");
+  }
+};
+
+// Unblock user by id
+export const unblockUserById = async (request, response, next) => {
+  try {
+    const userId = request.params.userId;
+    const result = await User.updateOne(
+      { _id: userId },
+      { $set: { isBlock: false } }
+    );
+    if (result.modifiedCount) {
+      return response
+        .status(200)
+        .json({ message: "User unblocked successfully" });
+    }
+    return response.status(404).json({ message: "User not found" });
+  } catch (error) {
+    console.log(error);
+    return response.status(500).json("Internal server error");
+  }
+};
 
 // Token genrate
 const generateToken = (email) => {
@@ -102,4 +262,3 @@ const generateToken = (email) => {
   return jwt.sign(payload, process.env.JWT_SECRET);
 };
 
-// ------------------------
