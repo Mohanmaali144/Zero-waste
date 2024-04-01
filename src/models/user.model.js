@@ -34,36 +34,6 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  role: {
-    type: String,
-    enum: ["customer", "vendor"],
-    required: true,
-    default: "customer",
-  },
-  location: [
-    {
-      country: {
-        type: String,
-        required: true,
-        trim: true,
-      },
-      state: {
-        type: String,
-        required: true,
-        trim: true,
-      },
-      city: {
-        type: String,
-        required: true,
-        trim: true,
-      },
-      pincode: {
-        type: Number,
-        required: true,
-        trim: true,
-      },
-    },
-  ],
 });
 
 const User = mongoose.model("user", userSchema);

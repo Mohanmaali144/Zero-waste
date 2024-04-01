@@ -3,127 +3,96 @@ import bcrypt from "bcrypt";
 import { validationResult } from "express-validator";
 import OTP from "../models/otp.model.js";
 import jwt from "jsonwebtoken";
-import { response } from "express";
-import Vendor from "../models/vendor.model.js";
-
 // User(Customer) otp send
 export const saveOTP = async (request, response, next) => {
   try {
-    let { email } = request.body;
+    const { email, otpNumber } = request.body;
     const expirationTime = new Date(Date.now() + 1 * 60 * 1000);
-    let otpNumber = request.body.otpNumber;
-    console.log(otpNumber);
-    await OTP.create({ email, otp: otpNumber, expirationTime })
-      .then((otpresult) => {
-        return response.status(200).json({ massage: "otp save succesfully" });
-      })
-      .catch((error) => {
-        console.log(error);
-        return response.status(500).json({ error: "OTP Failed to save" });
-      });
+
+    // OTP encryption.
+    const hashedOTP = await bcrypt.hash(otpNumber, 12);
+    // Save OTP in to Database
+    await OTP.create({
+      email,
+      otp: hashedOTP,
+      expirationTime,
+    });
+    return response.status(200).json({ message: "OTP saved successfully" });
   } catch (error) {
-    console.log(error);
-    return response.status(500).json({ error: "Internal server error " });
+    console.error(error);
+    return response.status(500).json({ error: "Internal server error" });
   }
 };
-
-
-
-
 
 // User(Customer) register
 export const register = async (request, response, next) => {
   try {
-    let password = request.body.password;
-    // password encryption.
-    let saltkey = bcrypt.genSaltSync(10);
-    password = bcrypt.hashSync(password, saltkey);
-    request.body.password = password;
-    // save user data
-    User.create(request.body)
-      .then((result) => {
-        // result = result.toObject();
-        delete result.password;
-        if (request.body.role === "vendor") {
-          const { city, pincode, state, landmark, fullAddress } = request.body;
-          // Save Vendor Details
-          const vendor = Vendor.create({
-            userId: result._id,
-            gstNumber: request.body.gstNumber,
-            address: [{ city, pincode, state, landmark, fullAddress }],
-          });
-          return response.status(200).json({
-            massage: "Vendor registartion succesfully,,  wait for verification",
-            User: result,
-          });
-        }
-        return response
-          .status(200)
-          .json({ massage: "User registartion succesfully", User: result });
-      })
-      .catch((error) => {
-        console.log(error);
-        return response.status(500).json({ error: "User registration faild" });
-      });
+    const hashedPassword = bcrypt.hashSync(request.body.password, 10);
+    request.body.password = hashedPassword;
+    const user = await User.create(request.body);
+    user.password = undefined;
+    return response
+      .status(200)
+      .json({ massage: "User Registration Successfull", User: user });
   } catch (error) {
     console.log(error);
-    return response.status(500).json({ error: "internal server error" });
+    return response.status(500).json({ error: "Internal server error" });
   }
 };
 
 // User(Customer) LOGIN
-export const signIn = async (req, res, next) => {
+export const signIn = async (request, response, next) => {
   try {
-    const errors = validationResult(req);
+    const errors = validationResult(request);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return response.status(400).json({ errors: errors.array() });
     }
-    const { email } = req.body;
-    // chack user
+    const { email, password } = request.body;
     const user = await User.findOne({ email });
-    if (user) {
-      let password = req.body.password;
-      // check password
-      if (bcrypt.compareSync(password, user.password)) {
-        return res.status(200).json({
-          message: "Sign in success...",
-          user: { ...user.toObject(), password: undefined },
-          token: generateToken(email),
-        });
-      } else {
-        return res.status(500).json({ message: "Incorrect password..." });
-      }
+    if (!user) {
+      return response
+        .status(400)
+        .json({ message: "Unauthoried user, please chack your email" });
+    }
+    if (bcrypt.compareSync(password, user.password)) {
+      const token = generateToken(email);
+      return response.status(200).json({
+        message: "Sign in success...",
+        user: { ...user.toObject(), password: undefined },
+        token,
+      });
     } else {
-      return res
-        .status(401)
-        .json({ message: "Unauthorized user,,, please Check your email" });
+      return response.status(400).json({
+        message: "Unauthorized user, please check your email or password",
+      });
     }
   } catch (err) {
-    console.log(err);
-    return res.status(401).json({ message: "Internal server error" });
+    console.error(err);
+    return response.status(500).json({ message: "Internal Server error" });
   }
 };
 
 // User(Customer) change password
-export const updatePassword = async (request, response, next) => {
+export const changePassword = async (request, response, next) => {
   try {
-    let { email, password } = request.body;
-    // password encryption.
-    let saltkey = bcrypt.genSaltSync(10);
-    password = bcrypt.hashSync(password, saltkey);
-    // request.body.password = password;
-    const result = await User.updateOne({ email }, { $set: { password } });
+    const { email, password } = request.body;
+    const hashedPassword = bcrypt.hashSync(password, 10);
+    const result = await User.updateOne(
+      { email },
+      { $set: { password: hashedPassword } }
+    );
     if (result.matchedCount) {
       return response
+        .status(200)
+        .json({ message: "Password changed successfully" });
+    } else {
+      return response
         .status(401)
-        .json({ message: "Paasword change Succesfully" });
+        .json({ message: "Unauthorized user, please check your email" });
     }
-    return response
-      .status(401)
-      .json({ message: "Unauthorized user,,, please Check your email" });
-  } catch (err) {
-    console.log(err);
-    return res.status(401).json({ message: "Internal server error" });
+  } catch (error) {
+    console.error(error);
+    return response.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -134,43 +103,3 @@ const generateToken = (email) => {
 };
 
 // ------------------------
-
-// User(Customer) otp send
-// export const saveOTP = async (request, response, next) => {
-//   try {
-//     let { email } = request.body;
-//     const expirationTime = new Date(Date.now() + 1 * 60 * 1000);
-//     let otpNumber = request.body.otpNumber;
-//     console.log(otpNumber);
-//     await OTP.create({ email, otp: otpNumber, expirationTime })
-//       .then((otpresult) => {
-//         let password = request.body.password;
-//         // password encryption.
-//         let saltkey = bcrypt.genSaltSync(10);
-//         password = bcrypt.hashSync(password, saltkey);
-//         request.body.password = password;
-//         // save user data
-//         User.create(request.body)
-//           .then((result) => {
-//             // result = result.toObject();
-//             delete result.password;
-//             return response
-//               .status(200)
-//               .json({ massage: "User registartion succesfully", User: result });
-//           })
-//           .catch((error) => {
-//             console.log(error);
-//             return response
-//               .status(500)
-//               .json({ error: "User registration faild" });
-//           });
-//       })
-//       .catch((error) => {
-//         console.log(error);
-//         return response.status(500).json({ error: "internal server error" });
-//       });
-//   } catch (error) {
-//     console.log(error);
-//     return response.status(500).json({ error: "Internal server error " });
-//   }
-// };
