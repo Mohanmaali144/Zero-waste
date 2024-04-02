@@ -10,22 +10,7 @@
     "location": "String",
     "role": "(enum : vandor,Customer])"
   },
-  "Vandor": {
-    "_id": "ObjectId(-------)",
-    "userId": "(ref User collections )",
-    "gst": "Required : String",
-    "address": [
-      {
-        "city": "Indore",
-        "pincode": "42001",
-        "State": "M.P",
-        "landmark": "Near SBI BANK",
-        "Full Address": "xyz"
-      }
-    ],
-    "rating": "Number max-5 min-0",
-    "isVerify": "boolean/false"
-  },
+  
   "Product Collections": {
     "product_name": "String",
     "description": "String",
