@@ -10,12 +10,13 @@
     "location": "String",
     "role": "(enum : vandor,Customer])"
   },
-  
+
   "Product Collections": {
     "product_name": "String",
     "description": "String",
     "price": "String",
     "quantity": "Number",
+    "weight": "Number",
     "seller_id": "ref userId",
     "category": "ref category",
     "thumbnail": "String",
@@ -28,36 +29,49 @@
         "user_review": "String"
       }
     ],
+    "shiping cost": "Number",
+    "Comission": "Number",
     "discountPercentage": "Number default : 0"
   },
 
-  "$schema Category": {
+  "Category": {
     "_id": "ObjectId(-------)",
     "categoryName": "smartphone"
   },
-  "$schema Scrap-Category": {
+  "Scrap-Category": {
     "_id": "ObjectId(-------)",
     "Scrap-category": "Scrap-smartphone"
   },
-  "Scrap Product": {
-    "userId": "ref UserId",
-    "category": "(ref Scrap)",
-    "quantity": "Number",
-    "weight": "Number",
-    "location": [
-      {
-        "city": "Indore",
-        "pincode": "42001",
-        "State": "M.P",
-        "landmark": "Near SBI BANK",
-        "Full Address": "xyz"
-      }
-    ],
-    "contact": "String",
+  {
+    "_id": "ObjectId",
+    "title": "String",
+    "description": "String",
+    "category": "String",
+    "condition":"enum('good','medium','worst')",
+    "price": "Number",
+    "seller": {
+      "userId": "ObjectId",
+      "contact": "String"
+    },
+    "dimensions": {
+      "length": "Number",
+      "width": "Number",
+      "height": "Number"
+    },
     "thumbnail": "String",
-    "images": "[String]"
+    "images": "[String]",
+    "location": [
+        {
+          "city": "Indore",
+          "pincode": "42001",
+          "State": "M.P",
+          "landmark": "Near SBI BANK",
+          "Full Address": "xyz"
+        }
+      ],
+     "status":"enum('Done','pending')"
   },
-  "$schema Cart": {
+  "Cart": {
     "UserId": { "type": "ObjectId", "ref": "User", "required": true },
     "CartItem": [
       {
@@ -68,7 +82,7 @@
     "totalPrice": { "type": "Number", "default": 0 }
   },
 
-  "$schema Order": {
+  "Order": {
     "UserId": { "type": "ObjectId", "ref": "User", "required": true },
     "orderItems": [{ "ProductId": "ref Product" }],
     "totalPrice": { "type": "Number", "required": true },
@@ -80,7 +94,7 @@
     },
     "Order-Price": "String"
   },
-  "$schema Notification": {
+  "Notification": {
     "userId": { "type": "ObjectId", "ref": "User", "required": "true" },
     "message": { "type": "String", "required": "true" },
     "type": {
@@ -91,7 +105,7 @@
     "read": { "type": "Boolean", "default": "false" },
     "createdAt": { "type": "Date", "default": "Date.now" }
   },
-  "$schema ShippingAddress": {
+  "ShippingAddress": {
     "userId": { "type": "ObjectId", "ref": "User", "required": "true" },
     "addressLine1": { "type": "String", "required": "true" },
     "addressLine2": { "type": "String" },
@@ -100,7 +114,7 @@
     "postalCode": { "type": "String", "required": "true" },
     "country": { "type": "String", "required": "true" }
   },
-  "$schema Payment": {
+  "Payment": {
     "userId": { "type": "ObjectId", "ref": "User", "required": "true" },
     "amount": { "type": "ObjectId", "required": "true", "ref": "Order" },
     "paymentMethod": {
@@ -110,7 +124,7 @@
     },
     "createdAt": { "type": "Date", "default": "Date.now" }
   },
-  "$schema Transection": {
+  "Transection": {
     "userId": { "type": "ObjectId", "ref": "User", "required": "true" },
     "orderId": { "type": "ObjectId", "ref": "Order", "required": "true" },
     "amount": { "type": "ObjectId", "required": "true", "ref": "Order" },
@@ -122,7 +136,7 @@
     },
     "createdAt": { "type": "Date", "default": "Date.now" }
   },
-  "$schema Admin": {
+  "Admin": {
     "_id": { "type": "ObjectId", "required": true },
     "adminname": { "type": "String", "required": true },
     "password": { "type": "String", "required": true },
@@ -130,30 +144,8 @@
     "createdAt": { "type": "Date", "default": "Date.now" },
     "updatedAt": { "type": "Date", "default": "Date.now" }
   },
-  "$schema VendorVerificationRequest": {
-    "_id": { "type": "ObjectId", "required": true },
-    "vendorId": { "type": "ObjectId", "ref": "Vendor", "required": true },
-    "status": {
-      "type": "String",
-      "enum": ["pending", "approved", "rejected"],
-      "default": "pending"
-    },
-    "createdAt": { "type": "Date", "default": "Date.now" },
-    "updatedAt": { "type": "Date", "default": "Date.now" }
-  },
-  "$schema ProductListRequest": {
-    "_id": { "type": "ObjectId", "required": true },
-    "userId": { "type": "ObjectId", "ref": "User", "required": true },
-    "products": [{ "type": "ObjectId", "ref": "Product" }],
-    "status": {
-      "type": "String",
-      "enum": ["pending", "approved", "rejected"],
-      "default": "pending"
-    },
-    "createdAt": { "type": "Date", "default": "Date.now" },
-    "updatedAt": { "type": "Date", "default": "Date.now" }
-  },
-  "$schema ScrapProductListRequest": {
+
+  "ScrapProductListRequest": {
     "_id": { "type": "ObjectId", "required": true },
     "userId": { "type": "ObjectId", "ref": "User", "required": true },
     "Scrap-products": [{ "type": "ObjectId", "ref": "Product" }],
@@ -165,13 +157,13 @@
     "createdAt": { "type": "Date", "default": "Date.now" },
     "updatedAt": { "type": "Date", "default": "Date.now" }
   },
-  "$schema AdminNotification": {
+  "AdminNotification": {
     "_id": { "type": "ObjectId", "required": true },
     "message": { "type": "String", "required": true },
     "createdAt": { "type": "Date", "default": "Date.now" },
     "read": { "type": "Boolean", "default": false }
   },
-  "$schema Analytic": {
+  " Analytic": {
     "_id": { "type": "ObjectId", "required": true },
     "type": {
       "type": "String",
@@ -181,7 +173,7 @@
     "data": { "type": "Mixed", "required": true },
     "createdAt": { "type": "Date", "default": "Date.now" }
   },
-  "$schema Admin Post": {
+  "Admin Post": {
     "_id": { "type": "ObjectId", "required": true },
     "adminId": { "type": "ObjectId", "ref": "AdminUser", "required": true },
     "title": { "type": "String", "required": true },
