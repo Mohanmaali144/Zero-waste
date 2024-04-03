@@ -1,6 +1,8 @@
 import cors from "cors";
 import express from "express";
 import userRouter from "./routes/user.route.js";
+import scrapCategoryRouter from "./routes/scrapCategory.route.js";
+import scrapProductRouter from "./routes/scrapProduct.route.js";
 const app = express();
 app.use(
   cors({
@@ -26,5 +28,9 @@ app.use(express.static("public"));
 
 // rotes declartions
 app.use("/api/user", userRouter);
+
+// Scrap category Base router
+app.use("/api/scrapCategory", scrapCategoryRouter);
+app.use("/api/scrapProduct", scrapProductRouter);
 
 export default app;
