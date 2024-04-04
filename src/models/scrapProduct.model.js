@@ -1,63 +1,98 @@
 import mongoose from "mongoose";
 
-const ScrapProductSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "user",
-    required: true,
-  },
-  category: {
-    type: String,
-    ref: "ScrapCategory",
-    required: true,
-  },
-  quantity: {
-    type: Number,
-    required: true,
-  },
-  weight: {
-    type: Number,
-    required: true,
-  },
-  location: [
-    {
-      city: {
-        type: String,
-        required: true,
-      },
-      pincode: {
-        type: String,
-        required: true,
-      },
-      state: {
-        type: String,
-        required: true,
-      },
-      landmark: {
-        type: String,
-        required: true,
-      },
-      fullAddress: {
-        type: String,
-        required: true,
-      },
-    },
-  ],
-  contact: {
-    type: String,
-    required: true,
-  },
-  thumbnail: {
-    type: String,
-    required: true,
-  },
-  images: [
-    {
+const ScrapProductSchema = new mongoose.Schema(
+  {
+    title: {
       type: String,
+      required: true,
+      trim: true,
     },
-  ],
-});
+    description: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    category: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    condition: {
+      type: String,
+      enum: ["good", "medium", "worst"],
+      required: true,
+      trim: true,
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
+    seller: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "user", // Referencing the User model
+    },
+    dimensions: {
+      length: {
+        type: Number,
+        required: true,
+      },
+      width: {
+        type: Number,
+        required: true,
+      },
+      height: {
+        type: Number,
+        required: true,
+      },
+    },
+    thumbnail: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    images: [
+      {
+        type: String,
+        trim: true,
+      },
+    ],
+    location: [
+      {
+        city: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+        pincode: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+        state: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+        landmark: {
+          type: String,
+          trim: true,
+        },
+        fullAddress: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+      },
+    ],
+    status: {
+      type: String,
+      enum: ["Done", "pending"],
+      required: true,
+      trim: true,
+    },
+  },
+  { timestamps: true }
+);
 
 const ScrapProduct = mongoose.model("ScrapProduct", ScrapProductSchema);
-
 export default ScrapProduct;
