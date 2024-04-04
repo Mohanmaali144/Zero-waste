@@ -8,10 +8,12 @@ import {
   getProductByName,
   getProductList,
   searchProduct,
+  updateProductById,
 } from "../controllers/scrapProduct.controller.js";
+import { auth } from "../middlewares/authorize.js";
 const scrapProductRouter = express.Router();
 
-scrapProductRouter.post("/addProduct", addScrapProduct);
+scrapProductRouter.post("/addProduct",auth, addScrapProduct);
 scrapProductRouter.get("/getProductList", getProductList);
 scrapProductRouter.get("/getProduct-byid/:id", getProductById);
 scrapProductRouter.get("/getProduct-byname/:name", getProductByName);
@@ -23,6 +25,6 @@ scrapProductRouter.get("/search-product", searchProduct);
 
 scrapProductRouter.delete("/deleteproduct-byid/:id", deleteProductById);
 
-// scrapProductRouter.put("/updateproduct-byid", updateProductById);
+scrapProductRouter.put("/updateproduct-byid", updateProductById);
 
 export default scrapProductRouter;
