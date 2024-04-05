@@ -63,8 +63,8 @@ export const getProductByName = async (request, response, next) => {
 
 export const getProductByCategory = async (request, response, next) => {
   try {
-    const category = request.params.categoryName;
-    let result = await ScrapProduct.find({ category }).populate({
+    const categoryName = request.params.categoryName;
+    let result = await ScrapProduct.find({ categoryName }).populate({
       path: "seller",
       select: "-password",
     });
@@ -80,18 +80,19 @@ export const getProductByCategory = async (request, response, next) => {
 
 export const searchProduct = async (request, response, next) => {
   try {
-    const { query } = request.body;
-    if (!query) {
+    const { query, maxPrice, minPrice } = request.body;
+    if ((!query && !maxPrice) || !minPrice) {
       return response.status(200).json({ massage: "invalid Searching" });
     }
     const searchCriteria = {
       $or: [
         { title: { $regex: query, $options: "i" } },
         { description: { $regex: query, $options: "i" } },
-        { category: { $regex: query, $options: "i" } },
-        { price: { $regex: query, $options: "i" } },
+        { categoryName: { $regex: query, $options: "i" } },
       ],
+      price: { $gte: minPrice, $lte: maxPrice },
     };
+
     let result = await ScrapProduct.find(searchCriteria).populate({
       path: "seller",
       select: "-password",
@@ -120,47 +121,24 @@ export const deleteProductById = async (request, response, next) => {
   }
 };
 
-// Panding................
-// export const updateProductById = async (request, response, next) => {
-//   try {
-//     const { id, title, description, category, condition, price, thumbnail } =
-//       request.body;
-//     const updatedProduct = await ScrapProduct.findByIdAndUpdate(
-//       { _id: id },
-//       {
-//         title,
-//         description,
-//         category,
-//         condition,
-//         price,
-//         thumbnail,
-//       }
-//     );
-//     if (!updatedProduct) {
-//       return response.status(404).json({ message: "Product not found" });
-//     }
-//     return response
-//       .status(200)
-//       .json({ message: "Product updated successfully" });
-//   } catch (error) {
-//     console.log(error);
-//     response.status(500).json({ error: "Internal Server Error" });
-//   }
-// };
-
-// export const updateProductById = async (request, response, next) => {
-//   try {
-//     const { id, title, description, category, condition, price, thumbnail } =
-//       request.body;
-//       console.log(id)
-//     ScrapProduct.updateOne(
-//       { _id: id },
-//       { $set: { title, description, category, condition, price, thumbnail } }
-//     );
-
-//     return response.status(400).json({ massage: "Product not found" });
-//   } catch (error) {
-//     console.log(error);
-//     response.status(500).json({ error: "Internal Server Error" });
-//   }
-// };
+// Panding (In progress)................
+export const updateProductById = async (request, response, next) => {
+  try {
+    const productId = request.body.id;
+    const updates = request.body;
+    const product = await ScrapProduct.findById(productId);
+    if (!product) {
+      return response.status(404).json({ message: "Product not found" });
+    }
+    Object.keys(updates).forEach((key) => {
+      if (updates[key] !== undefined) {
+        product[key] = updates[key];
+      }
+    });
+    const updatedProduct = await product.save();
+    return response.status(200).json({ product: updatedProduct });
+  } catch (error) {
+    console.error(error);
+    return response.status(500).json({ error: "Internal Server Error" });
+  }
+};

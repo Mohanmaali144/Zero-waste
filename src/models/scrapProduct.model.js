@@ -12,10 +12,9 @@ const ScrapProductSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    category: {
+    categoryName: {
       type: String,
-      required: true,
-      trim: true,
+      ref: "ScrapCategory",
     },
     condition: {
       type: String,
