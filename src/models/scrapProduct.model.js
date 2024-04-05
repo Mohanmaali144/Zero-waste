@@ -30,20 +30,6 @@ const ScrapProductSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "user", // Referencing the User model
     },
-    dimensions: {
-      length: {
-        type: Number,
-        required: true,
-      },
-      width: {
-        type: Number,
-        required: true,
-      },
-      height: {
-        type: Number,
-        required: true,
-      },
-    },
     thumbnail: {
       type: String,
       required: true,
