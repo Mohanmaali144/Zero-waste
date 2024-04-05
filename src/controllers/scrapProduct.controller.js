@@ -122,23 +122,74 @@ export const deleteProductById = async (request, response, next) => {
 };
 
 // Panding (In progress)................
-export const updateProductById = async (request, response, next) => {
+// export const updateProductById = async (request, response, next) => {
+//   try {
+//     const productId = request.body.id;
+//     const updates = request.body;
+//     const product = await ScrapProduct.findById(productId);
+//     if (!product) {
+//       return response.status(404).json({ message: "Product not found" });
+//     }
+//     Object.keys(updates).forEach((key) => {
+//       if (updates[key] !== undefined) {
+//         product[key] = updates[key];
+//       }
+//     });
+//     const updatedProduct = await product.save();
+//     return response.status(200).json({ product: updatedProduct });
+//   } catch (error) {
+//     console.error(error);
+//     return response.status(500).json({ error: "Internal Server Error" });
+//   }
+// };
+export const updateProduct = async (request, response, next) => {
   try {
-    const productId = request.body.id;
-    const updates = request.body;
-    const product = await ScrapProduct.findById(productId);
-    if (!product) {
-      return response.status(404).json({ message: "Product not found" });
+    let {
+      id,
+      title,
+      description,
+      categoryName,
+      condition,
+      price,
+      thumbnail,
+      userId,
+      userReview,
+      date,
+      shippingCost,
+      commission,
+    } = request.body;
+
+    let Product = await ScrapProduct.findOne({ _id: id });
+    if (Product) {
+      await ScrapProduct.updateMany(
+        { _id: id },
+        {
+          productName,
+          description,
+          price,
+          quantity,
+          weight,
+          sellerId,
+          discountPercentage,
+          rating,
+          brand,
+          thumbnail,
+          review: [{ userId, userReview, date }],
+          category,
+          shippingCost,
+          commission,
+        }
+      );
+
+      return response
+        .status(200)
+        .json({ message: "product data successully updated" });
     }
-    Object.keys(updates).forEach((key) => {
-      if (updates[key] !== undefined) {
-        product[key] = updates[key];
-      }
-    });
-    const updatedProduct = await product.save();
-    return response.status(200).json({ product: updatedProduct });
-  } catch (error) {
-    console.error(error);
-    return response.status(500).json({ error: "Internal Server Error" });
+    return response
+      .status(401)
+      .json({ error: "Bad request {product id not fonund}" });
+  } catch (err) {
+    console.log(err);
+    return response.status(500).json({ error: "Internal server error" });
   }
 };
