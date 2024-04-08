@@ -130,17 +130,7 @@
     "createdAt": { "type": "Date", "default": "Date.now" },
     "updatedAt": { "type": "Date", "default": "Date.now" }
   },
-  "$schema VendorVerificationRequest": {
-    "_id": { "type": "ObjectId", "required": true },
-    "vendorId": { "type": "ObjectId", "ref": "Vendor", "required": true },
-    "status": {
-      "type": "String",
-      "enum": ["pending", "approved", "rejected"],
-      "default": "pending"
-    },
-    "createdAt": { "type": "Date", "default": "Date.now" },
-    "updatedAt": { "type": "Date", "default": "Date.now" }
-  },
+
   "$schema ProductListRequest": {
     "_id": { "type": "ObjectId", "required": true },
     "userId": { "type": "ObjectId", "ref": "User", "required": true },
