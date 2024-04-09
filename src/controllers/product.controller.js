@@ -1,6 +1,8 @@
 import { product } from "../models/product.model.js";
 import { validationResult } from "express-validator";
-
+import Notification from "../models/notification.model.js";
+import User from "../models/user.model.js";
+import { PRODUCT_ARRIVAL_MSG } from "../constants.js";
 export const addAllProduct = async (request, response, next) => {
     try {
         let data = request.body.products;
@@ -28,11 +30,20 @@ export const addProduct = async (request, response, next) => {
         if (!errors.isEmpty()) {
             return response.status(401).json({ errors: errors.array() });
         }
-        console.log(request.body);
-        await product.create(request.body);
-        response.status(200).json({ message: "product data Stored Successfully" });
+       const productobj =  await product.create(request.body);
+         // Send a notification to all users about the new product
+        const users = await User.find({});
+         const notificationPromises = users.map(user =>
+           Notification.create({
+           userId: user._id,
+          message: `${PRODUCT_ARRIVAL_MSG}  ${productobj.productName}`
+      })
+    );
+    await Promise.all(notificationPromises);
+    return response.status(200).json({ message: "product data Stored Successfully" });
     }
     catch (err) {
+        console.log(err)
         return response.status(500).json({ error: "Internal server error" });
     }
 }
