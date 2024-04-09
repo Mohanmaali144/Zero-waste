@@ -3,6 +3,9 @@ import express from "express";
 import userRouter from "./routes/user.route.js";
 import scrapCategoryRouter from "./routes/scrapCategory.route.js";
 import scrapProductRouter from "./routes/scrapProduct.route.js";
+import productRouter from "./routes/product.routes.js";
+import categoryRouter from "./routes/category.routes.js";
+import NotificationRouter from "./routes/notification.route.js";
 const app = express();
 app.use(
   cors({
@@ -32,5 +35,12 @@ app.use("/api/user", userRouter);
 // Scrap category Base router
 app.use("/api/scrapCategory", scrapCategoryRouter);
 app.use("/api/scrapProduct", scrapProductRouter);
+
+// user Product Base Router
+app.use("/api/product", productRouter);
+app.use("/api/category",categoryRouter);
+
+// Notification route
+app.use("/api/notification",NotificationRouter);
 
 export default app;
