@@ -26,7 +26,6 @@ const userRouter = express.Router();
 userRouter.post(
   "/sendOTP",
   body("email", "email is required").notEmpty(),
-  body("email", "email is not valid").isEmail(),
   body("username", "username is required").notEmpty(),
   sendOTP,
   saveOTP
