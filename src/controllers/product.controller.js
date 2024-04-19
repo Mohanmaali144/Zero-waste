@@ -3,6 +3,8 @@ import { validationResult } from "express-validator";
 import Notification from "../models/notification.model.js";
 import User from "../models/user.model.js";
 import { PRODUCT_ARRIVAL_MSG } from "../constants.js";
+
+
 export const addAllProduct = async (request, response, next) => {
     try {
         let data = request.body.products;
@@ -222,34 +224,7 @@ export const updateProduct = async (request, response, next) => {
         return response.status(500).json({ error: "Internal server error" });
     }
 }
-//------
-// export const searchProduct = async (request, response, next) => {
-//     try {
-//       const { query } = request.body;
-//       if (!query) {
-//         return response.status(200).json({ message: "invalid Searching" });
-//       }
-//       const searchCriteria = {
-//         $or: [
-//           { productNAme: { $regex: query, $options: "i" } },
-//           { description: { $regex: query, $options: "i" } },
-//           { category: { $regex: query, $options: "i" } },
-//           { price: { $regex: query, $options: "i" } },
-//         ],
-//       };
-//       let result = await product.find(searchCriteria).populate({
-//         path: "sellerId",
-//         select: "-password",
-//       });
-//       if (result.length > 0) {
-//         return response.status(200).json({ product: result });
-//       }
-//       return response.status(401).json({ message: "Product not found" });
-//     } catch (error) {
-//       console.log(error);
-//       response.status(500).json({ error: "Internal Server Error" });
-//     }
-//   };
+
 //------
 // export const removeImage = (request, response, next) => {
 //     let sellerId = request.body.sellerId;

@@ -13,12 +13,12 @@ import {
 } from "../controllers/scrapCategory.controller.js";
 const scrapCategoryRouter = express.Router();
 
+
 scrapCategoryRouter.post(
   "/add-category",
   body("categoryName", "Category Name required"),
   addScrapCategory
 );
-
 scrapCategoryRouter.post("/add-categorylist", addAllCategory);
 scrapCategoryRouter.get("/getcategoryList", scrapCategoryList);
 

@@ -20,7 +20,7 @@ const sendOTP = async (request, response, next) => {
     const { email, username } = request.body;
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return response.status(201).json({ message: "User already exists" });
+      return response.status(400).json({ message: "User already exists" });
     }
     const existingOTP = await OTP.findOne({ email });
     if (existingOTP) {
@@ -29,14 +29,14 @@ const sendOTP = async (request, response, next) => {
           (existingOTP.expirationTime - Date.now()) / 1000
         );
         return response.status(400).json({
-          message: `Please wait for ${remainingTime} seconds before requesting a new OTP`,
+          message: `${remainingTime}`,
         });
       } else {
         await OTP.deleteOne({ email });
       }
     }
     const otpNumber = generateOTP();
-    sendMail(
+    let mailstatus = sendMail(
       email,
       `Subject: Your One-Time Password (OTP) for ${PROJECT_NAME}`,
       getEmailOTPMassage(username, otpNumber)
@@ -44,9 +44,10 @@ const sendOTP = async (request, response, next) => {
     console.log(otpNumber);
     request.body.otpNumber = otpNumber;
     // Send to the next controller
+    if (!mailstatus)
+      return response.status(500).json({ error: "Internal server error" });
     next();
   } catch (error) {
-    console.error(error);
     return response.status(500).json({ error: "Internal server error" });
   }
 };
@@ -101,7 +102,7 @@ const verifyEmail = async (request, response, next) => {
   try {
     const errors = validationResult(request);
     if (!errors.isEmpty())
-      return response.status(400).json({ errors: errors.array() });
+      return response.status(401).json({ errors: errors.array() });
     const { email, otp } = request.body;
     // get OTP data from database
     const otpData = await OTP.findOne({ email });
