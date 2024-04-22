@@ -63,7 +63,7 @@ const productSchema = new mongoose.Schema({
         userReview: {
             type: String,
             trim: true,
-             required : true,
+            required : true,
         },
         date : {
             type : Date,

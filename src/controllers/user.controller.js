@@ -6,15 +6,13 @@ import OTP from "../models/otp.model.js";
 export const saveOTP = async (request, response, next) => {
   try {
     const { email, otpNumber } = request.body;
-    const expirationTime = new Date(Date.now() + 1 * 60 * 1000);
-
     // OTP encryption.
+    console.log(otpNumber);
     const hashedOTP = await bcrypt.hash(otpNumber, 12);
     // Save OTP in to Database
     await OTP.create({
       email,
       otp: hashedOTP,
-      expirationTime,
     });
     return response.status(200).json({ message: "OTP Send successfully" });
   } catch (error) {
@@ -29,10 +27,17 @@ export const register = async (request, response, next) => {
     const hashedPassword = bcrypt.hashSync(request.body.password, 10);
     request.body.password = hashedPassword;
     const user = await User.create(request.body);
-    user.password = undefined;
-    return response
-      .status(200)
-      .json({ massage: "User Registration Successfull", User: user });
+    // user.password = undefined;
+    // return response
+    //   .status(200)
+    //   .json({ massage: "User Registration Successfull", User: user });
+    const token = generateToken(request.email);
+    return response.status(200).json({
+      message: "User Registration Successfull",
+      user: { ...user.toObject(), password: undefined },
+      token
+    });
+
   } catch (error) {
     console.log(error);
     return response.status(500).json({ error: "Internal server error" });
@@ -51,7 +56,7 @@ export const signIn = async (request, response, next) => {
     if (!user) {
       return response
         .status(400)
-        .json({ message: "Unauthoried user, please chack your email" });
+        .json({ message: "invalid email" });
     }
     if (bcrypt.compareSync(password, user.password)) {
       const token = generateToken(email);
@@ -62,7 +67,7 @@ export const signIn = async (request, response, next) => {
       });
     } else {
       return response.status(400).json({
-        message: "Unauthorized user, please check your email or password",
+        message: "invalid password",
       });
     }
   } catch (err) {

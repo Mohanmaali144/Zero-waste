@@ -20,7 +20,7 @@ const sendOTP = async (request, response, next) => {
     const { email, username } = request.body;
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return response.status(400).json({ message: "User already exists" });
+      return response.status(409).json({ message: "User already exists" });
     }
     const existingOTP = await OTP.findOne({ email });
     if (existingOTP) {
@@ -104,18 +104,20 @@ const verifyEmail = async (request, response, next) => {
     if (!errors.isEmpty())
       return response.status(401).json({ errors: errors.array() });
     const { email, otp } = request.body;
+
+    console.log(otp);
     // get OTP data from database
     const otpData = await OTP.findOne({ email });
     if (
       !otpData ||
-      !bcrypt.compareSync(otp, otpData.otp) ||
-      otpData.expirationTime.getTime() < Date.now()
+      !bcrypt.compareSync(otp, otpData.otp)
     ) {
-      return response.status(400).json({ error: "Invalid OTP" });
+      return response.status(401).json({ error: "Invalid OTP" });
     }
-    // OTP verification successful
+
     await OTP.deleteOne({ email });
     const user = await User.findOne({ email });
+    console.log(user);
     if (user) {
       return response
         .status(200)
@@ -124,7 +126,7 @@ const verifyEmail = async (request, response, next) => {
     // If user doesn't exist, proceed to next middleware
     next();
   } catch (error) {
-    console.error(error);
+    console.log(error);
     return response.status(500).json({ error: "Internal server error" });
   }
 };

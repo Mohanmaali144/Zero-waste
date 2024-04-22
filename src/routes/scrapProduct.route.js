@@ -18,7 +18,6 @@ const upload = multer({dest: "public/images/"});
 const scrapProductRouter = express.Router();
 
 // image uplaoding ....
-// router.post("/update-profile",upload.single("profile"),updateProfile);
 
 scrapProductRouter.post("/addProduct",upload.fields([
   { name: 'thumbnail', maxCount: 1 }, // For single thumbnail upload
