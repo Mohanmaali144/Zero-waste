@@ -14,10 +14,3 @@ connectDB()
     console.log("MognoDB Fail to connect !!!", err);
   });
 
-// mobile otp  --  email
-// emial otp  --  email
-// file ulpding  -- cloudnary
-// error handling api
-// payment getway - api
-// location --api
-// error Handling

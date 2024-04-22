@@ -34,20 +34,16 @@ userRouter.post(
 userRouter.post(
   "/register",
   body("email", "Email required").notEmpty(),
-  body("email", "invalid email").isEmail(),
   body("username", "Username required").notEmpty(),
   body("username", "Username required").notEmpty(),
   body("username", "Username must be at least 3 characters long").isLength({
     min: 3,
   }),
-  body("username", "Username cannot be more than 20 characters long").isLength({
-    max: 20,
-  }),
+
   body("contact", "contact number required").notEmpty(),
-  body("contact", "Invalid Contact Number").isNumeric(),
   body("password", "Password required").notEmpty(),
-  // body("password", "pleas Enter Strong password").isStrongPassword(),
-  body("password", "pleas Enter Strong password").isLength({ min: 6 }),
+
+  body("password", "pleas Enter Strong password").isLength({ min: 5 }),
 
   verifyEmail,
   register
