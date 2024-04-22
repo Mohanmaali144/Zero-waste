@@ -8,7 +8,7 @@ import User from "../models/user.model.js";
 export const addAllProduct = async (request, response, next) => {
     try {
         let data = request.body.products;
-        const errors = await validationResult(data);
+        const errors = validationResult(data);
         if (!errors.isEmpty()) {
             return response.status(400).json({ errors: errors.array() });
         }
@@ -32,17 +32,26 @@ export const addProduct = async (request, response, next) => {
         if (!errors.isEmpty()) {
             return response.status(401).json({ errors: errors.array() });
         }
-       const productobj =  await product.create(request.body);
-         // Send a notification to all users about the new product
+
+        const { productName, description, price, quantity, weight, sellerId, category, brand, rating, discountPercentage, review, shippingCost, commission } = request.body;
+
+        // images uplode by multer
+        
+        const thumbnail = request.files['thumbnail'][0].path;
+        const images = request.files['images'].map(file => file.path);
+        const newProduct = { productName, description, price, quantity, weight, sellerId, category, brand, rating, discountPercentage, review, shippingCost, commission, thumbnail, images };
+
+        const productobj = await product.create(newProduct);
+        // Send a notification to all users about the new product
         const users = await User.find({});
-         const notificationPromises = users.map(user =>
-           Notification.create({
-           userId: user._id,
-          message: `${PRODUCT_ARRIVAL_MSG}  ${productobj.productName}`
-      })
-    );
-    await Promise.all(notificationPromises);
-    return response.status(200).json({ message: "product data Stored Successfully" });
+        const notificationPromises = users.map(user =>
+            Notification.create({
+                userId: user._id,
+                message: `${PRODUCT_ARRIVAL_MSG}  ${productobj.productName}`
+            })
+        );
+        await Promise.all(notificationPromises);
+        return response.status(200).json({ message: "product data Stored Successfully" });
     }
     catch (err) {
         console.log(err)
@@ -54,10 +63,10 @@ export const productList = (request, response, next) => {
     product.find().populate({
         path: "sellerId",
         select: "-password",
-      }).populate({
+    }).populate({
         path: "review.userId",
         select: "-password",
-      })
+    })
         .then(result => {
             return response.status(200).json({ products: result });
         }).catch(err => {
@@ -75,10 +84,10 @@ export const fetchProductById = async (request, response, next) => {
         await product.find({ _id: id }).populate({
             path: "sellerId",
             select: "-password",
-          }).populate({
+        }).populate({
             path: "review.userId",
             select: "-password",
-          })
+        })
             .then(result => {
                 return response.status(200).json({ product: result });
             })
@@ -101,10 +110,10 @@ export const fetchProductByName = async (request, response, next) => {
         await product.find({ productName: name }).populate({
             path: "sellerId",
             select: "-password",
-          }).populate({
+        }).populate({
             path: "review.userId",
             select: "-password",
-          })
+        })
             .then(result => {
                 return response.status(200).json({ product: result });
             })
@@ -127,10 +136,10 @@ export const fetchProductByCategory = async (request, response, next) => {
         await product.find({ category: category }).populate({
             path: "sellerId",
             select: "-password",
-          }).populate({
+        }).populate({
             path: "review.userId",
             select: "-password",
-          })
+        })
             .then(result => {
                 return response.status(200).json({ product: result });
             })
@@ -153,10 +162,10 @@ export const fetchProductByPrice = async (request, response, next) => {
         await product.find({ price: price }).populate({
             path: "sellerId",
             select: "-password",
-          }).populate({
+        }).populate({
             path: "review.userId",
             select: "-password",
-          })
+        })
             .then(result => {
                 return response.status(200).json({ product: result });
             })
@@ -195,9 +204,9 @@ export const removeProductByName = async (request, response, next) => {
         if (!errors.isEmpty()) {
             return response.status(400).json({ errors: errors.array() });
         }
-        let Product = await product.findOne({productName:name});
+        let Product = await product.findOne({ productName: name });
         if (Product) {
-            await product.deleteMany({productName:name});
+            await product.deleteMany({ productName: name });
             return response.status(200).json({ message: "product deleted successfully" });
         }
         return response.status(401).json({ error: "Bad request (id not found)" });
