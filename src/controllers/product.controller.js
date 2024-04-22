@@ -1,5 +1,5 @@
-import { product } from "../models/product.model.js";
 import { validationResult } from "express-validator";
+import { product } from "../models/product.model.js";
 
 export const addAllProduct = async (request, response, next) => {
     try {

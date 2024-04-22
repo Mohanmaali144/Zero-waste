@@ -1,8 +1,8 @@
-import User from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import { validationResult } from "express-validator";
-import OTP from "../models/otp.model.js";
 import jwt from "jsonwebtoken";
+import OTP from "../models/otp.model.js";
+import User from "../models/user.model.js";
 // User(Customer) otp send
 export const saveOTP = async (request, response, next) => {
   try {
@@ -17,7 +17,7 @@ export const saveOTP = async (request, response, next) => {
       otp: hashedOTP,
       expirationTime,
     });
-    return response.status(200).json({ message: "OTP saved successfully" });
+    return response.status(200).json({ message: "OTP Send successfully" });
   } catch (error) {
     console.error(error);
     return response.status(500).json({ error: "Internal server error" });
