@@ -28,7 +28,7 @@ const ScrapProductSchema = new mongoose.Schema(
     },
     seller: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "user", // Referencing the User model
+      ref: "user",
     },
     thumbnail: {
       type: String,

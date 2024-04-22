@@ -3,14 +3,41 @@ import ScrapProduct from "../models/scrapProduct.model.js";
 
 export const addScrapProduct = async (request, response, next) => {
   try {
+
     if (!request.body) {
-      response.status(401).json({ massage: "Invalid Data" });
+      return response.status(400).json({ error: "Invalid data" });
     }
-    await ScrapProduct.create(request.body);
-    response.status(201).json({ massage: "Scrap product Stored Succefully" });
+    const {
+      title,
+      description,
+      categoryName,
+      condition,
+      price,
+      seller,
+      location,
+      status,
+    } = request.body;
+    // Get path of uploaded thumbnail
+    const thumbnail = request.files['thumbnail'][0].path;
+    const images = request.files['images'].map(file => file.path);
+    const newScrapProduct = new ScrapProduct({
+      title,
+      description,
+      categoryName,
+      condition,
+      price,
+      seller,
+      thumbnail,
+      images,
+      location,
+      status,
+    });
+
+    await ScrapProduct.create(newScrapProduct);
+    return response.status(201).json({ massage: "Scrap product Stored Succefully" });
   } catch (error) {
     console.log(error);
-    response.status(500).json({ error: "Internal Server Error" });
+    return response.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -81,9 +108,10 @@ export const getProductByCategory = async (request, response, next) => {
 export const searchProduct = async (request, response, next) => {
   try {
     const { query, maxPrice, minPrice } = request.body;
-    if ((!query && !maxPrice) || !minPrice) {
-      return response.status(200).json({ massage: "invalid Searching" });
-    }
+    // if ((!query && !maxPrice) || !minPrice) {
+    //   return response.status(200).json({ massage: "invalid Searching" });
+    // }
+    console.log(query)
     const searchCriteria = {
       $or: [
         { title: { $regex: query, $options: "i" } },
@@ -100,12 +128,14 @@ export const searchProduct = async (request, response, next) => {
     if (result.length > 0) {
       return response.status(200).json({ ScrapProduct: result });
     }
-    return response.status(400).json({ massage: "Product not found" });
+    console.log(result)
+    return response.status(400).json({ message: "Product not found" });
   } catch (error) {
     console.log(error);
     response.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 
 export const deleteProductById = async (request, response, next) => {
   try {

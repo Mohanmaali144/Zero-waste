@@ -20,13 +20,12 @@ const sendMail = async (recipientEmail, emailSubject, emailMessage) => {
     };
     await transporter.sendMail(mailOptions, (error, info) => {
       if (!error) {
-        console.log("Email sent successfully: " + info);
         return true;
-      } else throw new Error("Failed to send email");
+      } else return false;
     });
   } catch (error) {
     console.log(error);
-    throw new Error("Failed to send email");
+    return false;
   }
 };
 // sendMail("mehrapoonam379@gmail.com");

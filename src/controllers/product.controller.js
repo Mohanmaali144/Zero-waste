@@ -1,5 +1,9 @@
 import { validationResult } from "express-validator";
+import { PRODUCT_ARRIVAL_MSG } from "../constants.js";
+import Notification from "../models/notification.model.js";
 import { product } from "../models/product.model.js";
+import User from "../models/user.model.js";
+
 
 export const addAllProduct = async (request, response, next) => {
     try {
@@ -28,11 +32,20 @@ export const addProduct = async (request, response, next) => {
         if (!errors.isEmpty()) {
             return response.status(401).json({ errors: errors.array() });
         }
-        console.log(request.body);
-        await product.create(request.body);
-        response.status(200).json({ message: "product data Stored Successfully" });
+       const productobj =  await product.create(request.body);
+         // Send a notification to all users about the new product
+        const users = await User.find({});
+         const notificationPromises = users.map(user =>
+           Notification.create({
+           userId: user._id,
+          message: `${PRODUCT_ARRIVAL_MSG}  ${productobj.productName}`
+      })
+    );
+    await Promise.all(notificationPromises);
+    return response.status(200).json({ message: "product data Stored Successfully" });
     }
     catch (err) {
+        console.log(err)
         return response.status(500).json({ error: "Internal server error" });
     }
 }
@@ -211,34 +224,7 @@ export const updateProduct = async (request, response, next) => {
         return response.status(500).json({ error: "Internal server error" });
     }
 }
-//------
-// export const searchProduct = async (request, response, next) => {
-//     try {
-//       const { query } = request.body;
-//       if (!query) {
-//         return response.status(200).json({ message: "invalid Searching" });
-//       }
-//       const searchCriteria = {
-//         $or: [
-//           { productNAme: { $regex: query, $options: "i" } },
-//           { description: { $regex: query, $options: "i" } },
-//           { category: { $regex: query, $options: "i" } },
-//           { price: { $regex: query, $options: "i" } },
-//         ],
-//       };
-//       let result = await product.find(searchCriteria).populate({
-//         path: "sellerId",
-//         select: "-password",
-//       });
-//       if (result.length > 0) {
-//         return response.status(200).json({ product: result });
-//       }
-//       return response.status(401).json({ message: "Product not found" });
-//     } catch (error) {
-//       console.log(error);
-//       response.status(500).json({ error: "Internal Server Error" });
-//     }
-//   };
+
 //------
 // export const removeImage = (request, response, next) => {
 //     let sellerId = request.body.sellerId;
