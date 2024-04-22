@@ -1,7 +1,7 @@
 import otpGenerator from "otp-generator";
 import { PROJECT_NAME } from "../constants.js";
 const generateOTP = () => {
-  const otp = otpGenerator.generate(6, {
+  const otp = otpGenerator.generate(4, {
     digits: true,
     upperCaseAlphabets: false,
     lowerCaseAlphabets: false,
