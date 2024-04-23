@@ -1,12 +1,12 @@
-import sendMail from "../utils/SendMail.js";
+import bcrypt from "bcrypt";
 import { validationResult } from "express-validator";
 import { PROJECT_NAME } from "../constants.js";
 import OTP from "../models/otp.model.js";
 import User from "../models/user.model.js";
-import bcrypt from "bcrypt";
+import sendMail from "../utils/SendMail.js";
 import {
-  getEmailOTPMassage,
   generateOTP,
+  getEmailOTPMassage,
   getForgetPasswordmassage,
 } from "../utils/generateMassage.js";
 
@@ -15,7 +15,7 @@ const sendOTP = async (request, response, next) => {
   try {
     const errors = validationResult(request);
     if (!errors.isEmpty())
-      return response.status(400).json({ errors: errors.array() });
+      return response.status(401).json({ errors: errors.array() });
 
     const { email, username } = request.body;
     const existingUser = await User.findOne({ email });
@@ -131,4 +131,5 @@ const verifyEmail = async (request, response, next) => {
   }
 };
 
-export { sendOTP, verifyEmail, forgetPasswordOTP };
+export { forgetPasswordOTP, sendOTP, verifyEmail };
+

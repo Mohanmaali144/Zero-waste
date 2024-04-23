@@ -1,14 +1,14 @@
-import { product } from "../models/product.model.js";
 import { validationResult } from "express-validator";
-import Notification from "../models/notification.model.js";
-import User from "../models/user.model.js";
 import { PRODUCT_ARRIVAL_MSG } from "../constants.js";
+import Notification from "../models/notification.model.js";
+import { product } from "../models/product.model.js";
+import User from "../models/user.model.js";
 
 
 export const addAllProduct = async (request, response, next) => {
     try {
         let data = request.body.products;
-        const errors = await validationResult(data);
+        const errors = validationResult(data);
         if (!errors.isEmpty()) {
             return response.status(400).json({ errors: errors.array() });
         }
@@ -32,17 +32,8 @@ export const addProduct = async (request, response, next) => {
         if (!errors.isEmpty()) {
             return response.status(401).json({ errors: errors.array() });
         }
-
-        const { productName, description, price, quantity, weight, sellerId, category, brand, rating, discountPercentage, review, shippingCost, commission
-        } = request.body;
-        const thumbnail = request.files['thumbnail'][0].path;
-        const images = request.files['images'].map(file => file.path);
-
-        const newProduct = {
-            productName, description, price, quantity, weight, sellerId, category, thumbnail, brand, rating, discountPercentage, review, images, shippingCost, commission
-        }
-        const productobj = await product.create(newProduct);
-        // Send a notification to all users about the new product
+       const productobj =  await product.create(request.body);
+         // Send a notification to all users about the new product
         const users = await User.find({});
         const notificationPromises = users.map(user =>
             Notification.create({

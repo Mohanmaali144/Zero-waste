@@ -1,10 +1,7 @@
-import User from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import { validationResult } from "express-validator";
-import OTP from "../models/otp.model.js";
 import jwt from "jsonwebtoken";
-
-
+import OTP from "../models/otp.model.js";
 // User(Customer) otp send
 export const saveOTP = async (request, response, next) => {
   try {
@@ -17,7 +14,7 @@ export const saveOTP = async (request, response, next) => {
       email,
       otp: hashedOTP,
     });
-    return response.status(200).json({ message: "OTP saved successfully" });
+    return response.status(200).json({ message: "OTP Send successfully" });
   } catch (error) {
     console.error(error);
     return response.status(500).json({ error: "Internal server error" });
@@ -30,10 +27,6 @@ export const register = async (request, response, next) => {
     const hashedPassword = bcrypt.hashSync(request.body.password, 10);
     request.body.password = hashedPassword;
     const user = await User.create(request.body);
-    // user.password = undefined;
-    // return response
-    //   .status(200)
-    //   .json({ massage: "User Registration Successfull", User: user });
     const token = generateToken(request.email);
     return response.status(200).json({
       message: "User Registration Successfull",
