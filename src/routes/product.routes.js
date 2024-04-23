@@ -4,18 +4,13 @@ import { upload } from "../middlewares/multer.middleware.js";
 
 import { addAllProduct, fetchProductByCategory, fetchProductById, fetchProductByName, fetchProductByPrice, productList, removeProductById, removeProductByName, updateProduct, addProduct } from "../controllers/product.controller.js";
 
-import { param } from "express-validator";
-
-import multer from "multer";
-import { addProduct, fetchProductByCategory, fetchProductById, fetchProductByName, fetchProductByPrice, productList, removeProductById, removeProductByName, updateProduct } from "../controllers/product.controller.js";
 const productRouter = express.Router();
 
-
-productRouter.post("/addProduct", 
-upload.fields([
-    { name: 'thumbnail', maxCount: 1 }, // For single thumbnail upload
-    { name: 'images', maxCount: 5 }     // For multiple images (up to 5) upload
-]),
+productRouter.post("/addProduct",
+    upload.fields([
+        { name: 'thumbnail', maxCount: 1 }, // For single thumbnail upload
+        { name: 'images', maxCount: 5 }     // For multiple images (up to 5) upload
+    ]),
     body("productName", "product name is required").notEmpty(),
     body("description", "description is required").notEmpty(),
     body("price", "price is required").notEmpty(),
@@ -33,19 +28,9 @@ upload.fields([
     body("images", "images is required").notEmpty(),
     body("shippingCost", "shipping Cost is required").isNumeric(),
     body("commission", "commission is required").isNumeric(),
-addProduct
+    addProduct
 );
 
-// image uplaoding ....
-// router.post("/update-profile",upload.single("profile"),updateProfile);
-
-
-// productRouter.post("/addAllProduct",
-//     upload.fields([
-//         { name: 'thumbnail', maxCount: 1 }, // For single thumbnail upload
-//         { name: 'images', maxCount: 5 }     // For multiple images (up to 5) upload
-//     ]),
-//     addAllProduct);
 
 productRouter.get("/productList", productList);
 

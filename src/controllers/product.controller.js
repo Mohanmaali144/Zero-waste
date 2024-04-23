@@ -4,7 +4,6 @@ import Notification from "../models/notification.model.js";
 import { product } from "../models/product.model.js";
 import User from "../models/user.model.js";
 
-
 export const addAllProduct = async (request, response, next) => {
     try {
         let data = request.body.products;
