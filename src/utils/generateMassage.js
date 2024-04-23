@@ -49,4 +49,5 @@ const getForgetPasswordmassage = (otp) => {
  ${process.env.PROJECT_NAME}
  `;
 };
-export { getEmailOTPMassage, generateOTP, getForgetPasswordmassage };
+export { generateOTP, getEmailOTPMassage, getForgetPasswordmassage };
+

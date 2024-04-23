@@ -5,6 +5,7 @@ export const addAllCategory = async (request, response, next) => {
     console.log(request.body);
     try {
         let categoryList = request.body;
+        console.log(categoryList);
         for (let category of categoryList)
             await Category.create({ categoryName: category });
         return response.status(200).json({ message: "All Category Saved.." });
