@@ -27,10 +27,6 @@ export const register = async (request, response, next) => {
     const hashedPassword = bcrypt.hashSync(request.body.password, 10);
     request.body.password = hashedPassword;
     const user = await User.create(request.body);
-    // user.password = undefined;
-    // return response
-    //   .status(200)
-    //   .json({ massage: "User Registration Successfull", User: user });
     const token = generateToken(request.email);
     return response.status(200).json({
       message: "User Registration Successfull",
